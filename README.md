@@ -1,1 +1,1 @@
-# FullStack2020
+# FullStack2020-kurssi
