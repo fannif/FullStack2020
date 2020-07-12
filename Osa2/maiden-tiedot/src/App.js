@@ -26,13 +26,13 @@ const App = () => {
 
     if (countriesToShow.length === 1) {
         const country = countriesToShow[0]
-        if (weathers.length === 0) {
-            axios
-            .get(`http://api.weatherstack.com/current?access_key=${ACCESS_KEY}&query=${country.capital}`)
-            .then(response => {
-            setWeathers(response.data.current)
-            })
-        }
+        
+        axios
+        .get(`http://api.weatherstack.com/current?access_key=${ACCESS_KEY}&query=${country.capital}`)
+        .then(response => {
+        setWeathers(response.data.current)
+        })
+        
         return (
             <div>
                 <Filter newSearch = {newSearch} handleSearchChange = {handleSearchChange} />
