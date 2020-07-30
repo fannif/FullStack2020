@@ -133,10 +133,12 @@ const App = () => {
         <div style={hideVisible}>
           <button onClick={() => setAddVisible(true)}>New blog</button>
         </div>
+        <p></p>
         <div style={showVisible}>
           <BlogForm createBlog={addBlog} />
-          <button onClick={() => setAddVisible(false)}>cancel</button>
+          <button onClick={() => setAddVisible(false)}>Cancel</button>
         </div>
+        <p></p>
       </div>
     )
   }
