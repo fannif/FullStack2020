@@ -55,13 +55,19 @@ const App = () => {
               }, 5000)  
             })
             .catch(error => {
-              setPersons(persons.filter(p => p.id !== id))
-              setMessage({text:`Information of ${newName} has already been deleted from the server`, type:'error'})
-              setTimeout(() => {
-              setMessage({text:null, type:'notify'})
-              }, 5000)  
+              console.log(error.response)
+              if (error.response.data.error && error.response.data.error.includes("Validation failed")) {
+                setMessage({text:error.response.data.error, type:'error'})
+                console.log(error.response.data)
+              } else {
+                setPersons(persons.filter(p => p.id !== id))
+                setMessage({text:`Information of ${newName} has already been deleted from the server`, type:'error'})
+                setTimeout(() => {
+                setMessage({text:null, type:'notify'})
+                }, 5000)  
+              }
             })
-            return
+          return
       }
 
       numberService
@@ -74,7 +80,11 @@ const App = () => {
           setTimeout(() => {
             setMessage({text:null, type:'notify'})
           }, 5000)  
-        }) 
+        })
+        .catch(error => {
+          setMessage({text:error.response.data.error, type:'error'})
+          console.log(error.response.data)
+        })
   }
 
   const deleteNumber = (toDelete) => {
