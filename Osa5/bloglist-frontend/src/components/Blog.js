@@ -1,7 +1,8 @@
 import React, {useState} from 'react'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, editBlog, removeBlog, user }) => {
   const [showAll, setShowAll] = useState(false)
+  const [likes, setLikes] = useState(blog.likes)
 
   const blogStyle = {
     paddingTop: 10,
@@ -14,13 +15,42 @@ const Blog = ({ blog }) => {
   const toggleShowAll = () => {
     setShowAll(!showAll)
   }
+  
+  const addLike = (event) => {
+    event.preventDefault()
+    blog = {
+      id: blog.id,
+      user: blog.user.id,
+      likes: blog.likes + 1,
+      author: blog.author,
+      title: blog.title,
+      url: blog.url
+    }
+    editBlog(blog)
+    setLikes(blog.likes)
+  }
 
+  const deleteBlog = (event) => {
+    event.preventDefault()
+    blog = {
+      id: blog.id,
+      user: blog.user.id,
+      likes: blog.likes + 1,
+      author: blog.author,
+      title: blog.title,
+      url: blog.url
+    }
+    removeBlog(blog)
+  }
+
+  const removeButton = <button onClick={deleteBlog}>Remove</button>
 
   const additionalInfo =
     <div>
       <div>{blog.url}</div>
-      <div>{blog.likes} <button>Like</button></div>
+      <div>{likes} <button onClick={addLike}>Like</button></div>
       <div>{blog.user.name}</div>
+      {user === blog.user.username ? removeButton : ''}
     </div>
 
   return(

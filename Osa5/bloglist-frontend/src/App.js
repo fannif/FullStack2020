@@ -13,9 +13,10 @@ const App = () => {
   const [addVisible, setAddVisible] = useState(false)
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
+    blogService.getAll().then(blogs => {
+      setBlogs( blogs.sort((a,b) => b.likes - a.likes))
+      console.log(blogs)
+    })
   }, [])
 
   useEffect(() => {
@@ -78,7 +79,7 @@ const App = () => {
     blogService
       .create(blogObject)
       .then(returnedBlog => {
-        setBlogs(blogs.concat(returnedBlog))
+        setBlogs(blogs.concat(returnedBlog).sort((a,b) => b.likes - a.likes))
         setAddVisible(false)
         setMessage({text:`A new blog ${blogObject.title} by ${blogObject.author} added`, type:'notify'})
         setTimeout(() => {
@@ -92,6 +93,46 @@ const App = () => {
       })
   }
 
+  const editBlog = (blogObject) => {
+    const id = blogObject.id
+    console.log(blogObject)
+    blogService
+      .update(id, blogObject)
+      .then(returnedBlog => {
+        setBlogs(blogs.map(blog => blog.id !== id ? blog : {...blog, likes:blog.likes+1}).sort((a,b) => b.likes - a.likes))
+        setMessage({text:`Added a like to blog ${blogObject.title}`, type:'notify'})
+        setTimeout(() => {
+          setMessage({text:null, type:'notify'})
+        }, 5000) 
+      }).catch(error => {
+        setMessage({text:`Error liking the blog.`, type:'error'})
+          setTimeout(() => {
+          setMessage({text:null, type:'notify'})
+        }, 5000)
+      })
+  }
+
+  const removeBlog = (blogObject) => {
+    if (window.confirm(`Remove blog ${blogObject.title} by ${blogObject.author}`)) {
+      const id = blogObject.id
+      blogService
+        .remove(id)
+        .then(() => {
+          setBlogs(blogs.filter(blog => blog.id !== blogObject.id).sort((a,b) => b.likes - a.likes))
+          setMessage({text:`Deleted ${blogObject.title}`, type:'notify'})
+          setTimeout(() => {
+            setMessage({text:null, type:'notify'})
+          }, 5000)  
+        }).catch(error => {
+          setBlogs(blogs.filter(blog => blog.id !== blogObject.id).sort((a,b) => b.likes - a.likes))
+          setMessage({text:`This blog has already been deleted from the server`, type:'error'})
+          setTimeout(() => {
+            setMessage({text:null, type:'notify'})
+          }, 5000)  
+        })
+    }
+  }
+
   const blogView = () => (
     <div>
       <h2>Blogs</h2>
@@ -100,7 +141,7 @@ const App = () => {
       <h3>Create new</h3>
       {blogForm()}
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} editBlog={editBlog} removeBlog={removeBlog} user={user.username} />
       )}
     </div>
   )
