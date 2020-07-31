@@ -1,4 +1,5 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
+import PropTypes from 'prop-types'
 
 const Blog = ({ blog, editBlog, removeBlog, user }) => {
   const [showAll, setShowAll] = useState(false)
@@ -15,7 +16,7 @@ const Blog = ({ blog, editBlog, removeBlog, user }) => {
   const toggleShowAll = () => {
     setShowAll(!showAll)
   }
-  
+
   const addLike = (event) => {
     event.preventDefault()
     blog = {
@@ -59,6 +60,13 @@ const Blog = ({ blog, editBlog, removeBlog, user }) => {
       {showAll ? additionalInfo : ''}
     </div>
   )
+}
+
+Blog.propTypes = {
+  removeBlog: PropTypes.func.isRequired,
+  editBlog: PropTypes.func.isRequired,
+  user: PropTypes.string.isRequired,
+  blog: PropTypes.object.isRequired
 }
 
 export default Blog

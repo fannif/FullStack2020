@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
+import LoginForm from './components/LoginForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -9,7 +10,7 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [message, setMessage] = useState({text:null, type:'notify'})
+  const [message, setMessage] = useState({ text:null, type:'notify' })
   const [addVisible, setAddVisible] = useState(false)
 
   useEffect(() => {
@@ -21,7 +22,7 @@ const App = () => {
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBloglistUser')
-    
+
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
@@ -35,22 +36,22 @@ const App = () => {
       const user = await loginService.login({
         username, password
       })
-      
+
       window.localStorage.setItem(
         'loggedBloglistUser', JSON.stringify(user)
-      ) 
+      )
       blogService.setToken(user.token)
       setUser(user)
       setUsername('')
       setPassword('')
-      setMessage({text:'Successfully logged in', type:'notify'})
+      setMessage({ text:'Successfully logged in', type:'notify' })
       setTimeout(() => {
-        setMessage({text:null, type:'notify'})
+        setMessage({ text:null, type:'notify' })
       }, 5000)
     } catch (exception) {
-      setMessage({text:'Wrong username or password', type:'error'})
+      setMessage({ text:'Wrong username or password', type:'error' })
       setTimeout(() => {
-        setMessage({text:null, type:'notify'})
+        setMessage({ text:null, type:'notify' })
       }, 5000)
     }
   }
@@ -58,19 +59,19 @@ const App = () => {
   const handleLogOut = async (event) => {
     event.preventDefault()
     try {
-      window.localStorage.removeItem('loggedBloglistUser') 
+      window.localStorage.removeItem('loggedBloglistUser')
       blogService.setToken('')
       setUser(null)
       setUsername('')
       setPassword('')
-      setMessage({text:'Successfully logged out', type:'notify'})
+      setMessage({ text:'Successfully logged out', type:'notify' })
       setTimeout(() => {
-        setMessage({text:null, type:'notify'})
+        setMessage({ text:null, type:'notify' })
       }, 5000)
     } catch (exception) {
-      setMessage({text:'Logout failed', type:'error'})
+      setMessage({ text:'Logout failed', type:'error' })
       setTimeout(() => {
-        setMessage({text:null, type:'notify'})
+        setMessage({ text:null, type:'notify' })
       }, 5000)
     }
   }
@@ -81,14 +82,14 @@ const App = () => {
       .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog).sort((a,b) => b.likes - a.likes))
         setAddVisible(false)
-        setMessage({text:`A new blog ${blogObject.title} by ${blogObject.author} added`, type:'notify'})
+        setMessage({ text:`A new blog ${blogObject.title} by ${blogObject.author} added`, type:'notify' })
         setTimeout(() => {
-          setMessage({text:null, type:'notify'})
-        }, 5000) 
-      }).catch(error => {
-        setMessage({text:`Error adding new blog. Blog must have title and url.`, type:'error'})
-          setTimeout(() => {
-          setMessage({text:null, type:'notify'})
+          setMessage({ text:null, type:'notify' })
+        }, 5000)
+      }).catch(() => {
+        setMessage({ text:'Error adding new blog. Blog must have title and url.', type:'error' })
+        setTimeout(() => {
+          setMessage({ text:null, type:'notify' })
         }, 5000)
       })
   }
@@ -98,16 +99,16 @@ const App = () => {
     console.log(blogObject)
     blogService
       .update(id, blogObject)
-      .then(returnedBlog => {
-        setBlogs(blogs.map(blog => blog.id !== id ? blog : {...blog, likes:blog.likes+1}).sort((a,b) => b.likes - a.likes))
-        setMessage({text:`Added a like to blog ${blogObject.title}`, type:'notify'})
+      .then(() => {
+        setBlogs(blogs.map(blog => blog.id !== id ? blog : { ...blog, likes:blog.likes+1 }).sort((a,b) => b.likes - a.likes))
+        setMessage({ text:`Added a like to blog ${blogObject.title}`, type:'notify' })
         setTimeout(() => {
-          setMessage({text:null, type:'notify'})
-        }, 5000) 
-      }).catch(error => {
-        setMessage({text:`Error liking the blog.`, type:'error'})
-          setTimeout(() => {
-          setMessage({text:null, type:'notify'})
+          setMessage({ text:null, type:'notify' })
+        }, 5000)
+      }).catch(() => {
+        setMessage({ text:'Error liking the blog.', type:'error' })
+        setTimeout(() => {
+          setMessage({ text:null, type:'notify' })
         }, 5000)
       })
   }
@@ -119,16 +120,16 @@ const App = () => {
         .remove(id)
         .then(() => {
           setBlogs(blogs.filter(blog => blog.id !== blogObject.id).sort((a,b) => b.likes - a.likes))
-          setMessage({text:`Deleted ${blogObject.title}`, type:'notify'})
+          setMessage({ text:`Deleted ${blogObject.title}`, type:'notify' })
           setTimeout(() => {
-            setMessage({text:null, type:'notify'})
-          }, 5000)  
-        }).catch(error => {
+            setMessage({ text:null, type:'notify' })
+          }, 5000)
+        }).catch(() => {
           setBlogs(blogs.filter(blog => blog.id !== blogObject.id).sort((a,b) => b.likes - a.likes))
-          setMessage({text:`This blog has already been deleted from the server`, type:'error'})
+          setMessage({ text:'This blog has already been deleted from the server', type:'error' })
           setTimeout(() => {
-            setMessage({text:null, type:'notify'})
-          }, 5000)  
+            setMessage({ text:null, type:'notify' })
+          }, 5000)
         })
     }
   }
@@ -151,18 +152,12 @@ const App = () => {
       {user.name} logged in <button type="submit">Logout</button>
     </form>
   )
-  
+
   const loginForm = () => (
-    <form onSubmit={handleLogin}>
-      <h2>Log in to the application</h2>
-      <div>
-        Username <input type="text" value={username} name="Username" onChange={({ target }) => setUsername(target.value)}/>
-      </div>
-      <div> 
-        Password <input type="password" value={password} name="Password" onChange={({ target }) => setPassword(target.value)}/>
-      </div>
-      <button type="submit">Login</button>
-    </form>      
+    <LoginForm username={username} password={password} handleLogin={handleLogin}
+      handleUsername={({ target }) => setUsername(target.value)}
+      handlePassword={({ target }) => setPassword(target.value)}
+    />
   )
 
   const blogForm = () => {
