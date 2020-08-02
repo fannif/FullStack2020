@@ -141,9 +141,11 @@ const App = () => {
       <p></p>
       <h3>Create new</h3>
       {blogForm()}
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} editBlog={editBlog} removeBlog={removeBlog} user={user.username} />
-      )}
+      <ul id='blogs'>
+        {blogs.map(blog =>
+          <Blog key={blog.id} blog={blog} editBlog={editBlog} removeBlog={removeBlog} user={user.username} />
+        )}
+      </ul>
     </div>
   )
 
@@ -154,7 +156,7 @@ const App = () => {
   )
 
   const loginForm = () => (
-    <LoginForm username={username} password={password} handleLogin={handleLogin}
+    <LoginForm id='login-form' username={username} password={password} handleLogin={handleLogin}
       handleUsername={({ target }) => setUsername(target.value)}
       handlePassword={({ target }) => setPassword(target.value)}
     />
@@ -167,7 +169,7 @@ const App = () => {
     return(
       <div>
         <div style={hideVisible}>
-          <button onClick={() => setAddVisible(true)}>New blog</button>
+          <button id='new-blog' onClick={() => setAddVisible(true)}>New blog</button>
         </div>
         <p></p>
         <div style={showVisible}>

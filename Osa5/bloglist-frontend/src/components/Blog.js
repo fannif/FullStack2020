@@ -44,19 +44,19 @@ const Blog = ({ blog, editBlog, removeBlog, user }) => {
     removeBlog(blog)
   }
 
-  const removeButton = <button onClick={deleteBlog}>Remove</button>
+  const removeButton = <button id='delete' onClick={deleteBlog}>Remove</button>
 
   const additionalInfo =
     <div>
       <div>{blog.url}</div>
-      <div>{likes} <button onClick={addLike}>Like</button></div>
+      <div id='likes'>Likes: {likes} <button id='like' onClick={addLike}>Like</button></div>
       <div>{blog.user.name}</div>
       {user === blog.user.username ? removeButton : ''}
     </div>
 
   return(
-    <div style={blogStyle}>
-      {blog.title} {blog.author} <button onClick={toggleShowAll}>{showAll ? 'Hide' : 'View'}</button>
+    <div className='blog' style={blogStyle}>
+      {blog.title} {blog.author} <button id='toggle-view' onClick={toggleShowAll}>{showAll ? 'Hide' : 'View'}</button>
       {showAll ? additionalInfo : ''}
     </div>
   )
