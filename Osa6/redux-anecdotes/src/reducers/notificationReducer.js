@@ -1,3 +1,5 @@
+var timeoutID = 0
+
 const notificationReducer = (state = '', action) => {
     switch (action.type) {
       case 'SET_NOTIFICATION':
@@ -14,7 +16,8 @@ export const showNotification = (notification, timer) => {
         type: 'SET_NOTIFICATION',
         notification
       })
-      setTimeout(() => {
+      clearTimeout(timeoutID)
+      timeoutID = setTimeout(() => {
         dispatch({ type: 'REMOVE_NOTIFICATION'})
       }, timer * 1000)
     }
