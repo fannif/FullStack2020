@@ -5,12 +5,14 @@ import notificationReducer from './reducers/notificationReducer'
 import blogReducer from './reducers/blogReducer'
 import infoReducer from './reducers/infoReducer'
 import userReducer from './reducers/userReducer'
+import accountReducer from './reducers/accountReducer'
 
 const reducer = combineReducers({
   blogs: blogReducer,
   notification: notificationReducer,
   info: infoReducer,
-  user: userReducer
+  user: userReducer,
+  users: accountReducer
 })
 
 const store = createStore(

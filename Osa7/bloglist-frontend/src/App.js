@@ -3,10 +3,13 @@ import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
+import UserList, { User } from './components/UserList'
 import { useDispatch, useSelector } from 'react-redux'
+import { Switch, Route, Link, useRouteMatch } from 'react-router-dom'
 import { setNotification } from './reducers/notificationReducer'
 import { initializeBlogs, createBlog, likeBlog, deleteBlog } from './reducers/blogReducer'
 import { loginUser, logoutUser, setUser } from './reducers/userReducer'
+import { initializeUsers } from './reducers/accountReducer'
 
 const App = () => {
   const [username, setUsername] = useState('')
@@ -14,10 +17,12 @@ const App = () => {
   const [addVisible, setAddVisible] = useState(false)
   const blogs = useSelector(state => state.blogs)
   const user = useSelector(state => state.user)
+  const users = useSelector(state => state.users)
   const dispatch = useDispatch()
 
   useEffect(() => {
     dispatch(initializeBlogs())
+    dispatch(initializeUsers())
   }, [dispatch])
 
   useEffect(() => {
@@ -26,6 +31,24 @@ const App = () => {
       dispatch(setUser(loggedUserJSON))
     }
   }, [dispatch])
+
+  const matchUser = useRouteMatch('/users/:id')
+  const linkUser = matchUser
+    ? users.find(user => user.id === matchUser.params.id)
+    : null
+
+  const matchBlog = useRouteMatch('/blogs/:id')
+  const linkBlog = matchBlog
+    ? blogs.find(blog => blog.id === matchBlog.params.id)
+    : { title:'' }
+
+  const blogStyle = {
+    paddingTop: 10,
+    paddingLeft: 2,
+    border: 'solid',
+    borderWidth: 1,
+    marginBottom: 5
+  }
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -81,32 +104,55 @@ const App = () => {
     }
   }
 
-  const blogView = () => (
+  const listView = () => (
     <div>
-      <h2>Blogs</h2>
-      <div>{signOutForm()}</div>
-      <p></p>
-      <h3>Create new</h3>
-      {blogForm()}
-      <ul id='blogs'>
-        {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} editBlog={editBlog} removeBlog={removeBlog} user={user.username} />
-        )}
-      </ul>
+      <div>
+        {navbar()}
+        <h2>Blogs</h2>
+        <p></p>
+      </div>
+
+      <Switch>
+        <Route path='/users/:id'>
+          <User user={linkUser}/>
+        </Route>
+        <Route path='/users'>
+          <UserList />
+        </Route>
+        <Route path='/blogs/:id'>
+          <Blog blog={linkBlog} editBlog={editBlog} removeBlog={removeBlog} user={user.username} />
+        </Route>
+        <Route path='/'>
+          <div>
+            <h3>Create new</h3>
+            {blogForm()}
+            <ul id='blogs'>
+              {blogs.map(blog =>
+                <div key={blog.id} style={blogStyle}><Link to={`/blogs/${blog.id}`}>{blog.title}</Link> {blog.author}</div>
+              )}
+            </ul>
+          </div>
+        </Route>
+      </Switch>
     </div>
   )
 
-  const signOutForm = () => (
-    <form onSubmit = {handleLogOut}>
+  const navbar = () => (
+    <form className='nav' onSubmit = {handleLogOut}>
+      <Link className='padded' to="/blogs">blogs</Link>
+      <Link className='padded' to="/users">users</Link>
       {user.name} logged in <button type="submit">Logout</button>
     </form>
   )
 
   const loginForm = () => (
-    <LoginForm id='login-form' username={username} password={password} handleLogin={handleLogin}
-      handleUsername={({ target }) => setUsername(target.value)}
-      handlePassword={({ target }) => setPassword(target.value)}
-    />
+    <div>
+      <h2>Blogs</h2>
+      <LoginForm id='login-form' username={username} password={password} handleLogin={handleLogin}
+        handleUsername={({ target }) => setUsername(target.value)}
+        handlePassword={({ target }) => setPassword(target.value)}
+      />
+    </div>
   )
 
   const blogForm = () => {
@@ -131,7 +177,7 @@ const App = () => {
   return (
     <div>
       <Notification />
-      {user === null ? loginForm() : blogView()}
+      {user === null ? loginForm() : listView()}
     </div>
   )
 }
