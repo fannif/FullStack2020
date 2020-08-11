@@ -31,3 +31,20 @@
   td {
     padding: 5px
   }
+
+  .link{
+    color: rgb(255, 255, 255);
+  }
+
+  .btn-primary,
+  .btn-primary:active,
+  .btn-primary:visited,
+  .btn-primary:focus {
+      background-color: rgb(206, 132, 83);
+      border-color: rgb(235, 145, 71);
+  }
+
+  .btn-primary:hover {
+    background-color: rgb(150, 86, 44);
+    border-color: rgb(238, 159, 85);
+}

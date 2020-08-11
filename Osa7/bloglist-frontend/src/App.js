@@ -10,6 +10,7 @@ import { setNotification } from './reducers/notificationReducer'
 import { initializeBlogs, createBlog, likeBlog, deleteBlog } from './reducers/blogReducer'
 import { loginUser, logoutUser, setUser } from './reducers/userReducer'
 import { initializeUsers } from './reducers/accountReducer'
+import { Table, Button, Navbar, Nav } from 'react-bootstrap'
 
 const App = () => {
   const [username, setUsername] = useState('')
@@ -42,13 +43,13 @@ const App = () => {
     ? blogs.find(blog => blog.id === matchBlog.params.id)
     : { title:'' }
 
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5
-  }
+  // const blogStyle = {
+  //   paddingTop: 10,
+  //   paddingLeft: 2,
+  //   border: 'solid',
+  //   borderWidth: 1,
+  //   marginBottom: 5
+  // }
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -126,11 +127,13 @@ const App = () => {
           <div>
             <h3>Create new</h3>
             {blogForm()}
-            <ul id='blogs'>
-              {blogs.map(blog =>
-                <div key={blog.id} style={blogStyle}><Link to={`/blogs/${blog.id}`}>{blog.title}</Link> {blog.author}</div>
-              )}
-            </ul>
+            <Table striped id='blogs'>
+              <tbody>
+                {blogs.map(blog =>
+                  <tr key={blog.id}><td><Link to={`/blogs/${blog.id}`}>{blog.title}</Link> {blog.author}</td></tr>
+                )}
+              </tbody>
+            </Table>
           </div>
         </Route>
       </Switch>
@@ -138,11 +141,27 @@ const App = () => {
   )
 
   const navbar = () => (
-    <form className='nav' onSubmit = {handleLogOut}>
-      <Link className='padded' to="/blogs">blogs</Link>
-      <Link className='padded' to="/users">users</Link>
-      {user.name} logged in <button type="submit">Logout</button>
-    </form>
+    <Navbar collapseOnSelect expand="lg" bg="info" variant="">
+      <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+      <Navbar.Collapse id="responsive-navbar-nav">
+        <Nav className="mr-auto">
+          <Nav.Link href="#" as="span">
+            <Link className='link' to="/">Blogs</Link>
+          </Nav.Link>
+          <Nav.Link href="#" as="span">
+            <Link className='link' to="/users">Users</Link>
+          </Nav.Link>
+          <Nav.Link href="#" as="span">
+            {user
+              ? <div><em>{user.name} logged in </em>
+                <Button variant='primary' type="button" onClick={handleLogOut}>Logout</Button>
+              </div>
+              : ''
+            }
+          </Nav.Link>
+        </Nav>
+      </Navbar.Collapse>
+    </Navbar>
   )
 
   const loginForm = () => (
@@ -162,12 +181,12 @@ const App = () => {
     return(
       <div>
         <div style={hideVisible}>
-          <button id='new-blog' onClick={() => setAddVisible(true)}>New blog</button>
+          <Button variant='primary' id='new-blog' onClick={() => setAddVisible(true)}>New blog</Button>
         </div>
         <p></p>
         <div style={showVisible}>
           <BlogForm createBlog={addBlog} />
-          <button onClick={() => setAddVisible(false)}>Cancel</button>
+          <Button variant='primary' onClick={() => setAddVisible(false)}>Cancel</Button>
         </div>
         <p></p>
       </div>
@@ -175,7 +194,7 @@ const App = () => {
   }
 
   return (
-    <div>
+    <div className="container">
       <Notification />
       {user === null ? loginForm() : listView()}
     </div>
