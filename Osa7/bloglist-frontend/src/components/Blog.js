@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
-import { Button } from 'react-bootstrap'
+import { Button, Table, Form } from 'react-bootstrap'
 
-const Blog = ({ blog, editBlog, removeBlog, user }) => {
+const Blog = ({ blog, editBlog, removeBlog, createComment, user }) => {
   //const info = useSelector(state => state.info)
   // const dispatch = useDispatch()
   // const toggleShowAll = () => {
@@ -12,9 +12,10 @@ const Blog = ({ blog, editBlog, removeBlog, user }) => {
   //     dispatch(showInfo(blog.id))
   //   }
   // }
+  const [comment, setComment] = useState('')
 
   if (!blog) {
-    return null
+    return { user: { name: null } }
   }
 
   const addLike = (event) => {
@@ -29,6 +30,16 @@ const Blog = ({ blog, editBlog, removeBlog, user }) => {
     removeBlog(blog)
   }
 
+
+  const addComment = (event) => {
+    event.preventDefault()
+    console.log(comment)
+    createComment(blog, comment)
+    setComment('')
+  }
+
+  const handleComment = ({ target }) => setComment(target.value)
+
   const removeButton = <Button variant='primary' id='delete' onClick={deleteBlog}>Remove</Button>
 
   return (
@@ -38,6 +49,22 @@ const Blog = ({ blog, editBlog, removeBlog, user }) => {
       <div>{blog.likes} likes <Button variant='primary' id='like' onClick={addLike}>Like</Button></div>
       <div>Added by {blog.user.name}</div>
       {user === blog.user.username ? removeButton : ''}
+      <p></p>
+      <h3>Comments</h3>
+      <Form onSubmit={addComment}>
+        <Form.Group>
+          <Form.Control id='title' value={comment} onChange={handleComment} />
+          <Button variant='primary' id='create' type="submit">Add comment</Button>
+          <p></p>
+        </Form.Group>
+      </Form>
+      <Table striped id='blogs'>
+        <tbody>
+          {blog.comments.map(comment =>
+            <tr key={(Math.random() * 10000).toFixed(0)}><td>{comment}</td></tr>
+          )}
+        </tbody>
+      </Table>
     </div>
   )
 

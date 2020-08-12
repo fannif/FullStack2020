@@ -30,10 +30,18 @@ const update = (id, newBlog) => {
   return request.then(response => response.data)
 }
 
+const comment = async (id, comment) => {
+  console.log(comment, id, ' service')
+  comment = { comment }
+  const response = await axios.post(`${baseUrl}/${id}/comments`, comment)
+  return response.data
+}
+
 export default {
   getAll,
   create,
   remove,
   update,
-  setToken
+  setToken,
+  comment
 }

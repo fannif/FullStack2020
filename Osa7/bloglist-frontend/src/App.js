@@ -7,7 +7,7 @@ import UserList, { User } from './components/UserList'
 import { useDispatch, useSelector } from 'react-redux'
 import { Switch, Route, Link, useRouteMatch } from 'react-router-dom'
 import { setNotification } from './reducers/notificationReducer'
-import { initializeBlogs, createBlog, likeBlog, deleteBlog } from './reducers/blogReducer'
+import { initializeBlogs, createBlog, likeBlog, deleteBlog, addComment } from './reducers/blogReducer'
 import { loginUser, logoutUser, setUser } from './reducers/userReducer'
 import { initializeUsers } from './reducers/accountReducer'
 import { Table, Button, Navbar, Nav } from 'react-bootstrap'
@@ -105,6 +105,16 @@ const App = () => {
     }
   }
 
+  const createComment = (blog, comment) => {
+    try {
+      console.log(comment)
+      dispatch(addComment(blog, comment))
+      dispatch(setNotification({ text:`Comment added to blog ${blog.title}`, type:'notify' }, 5))
+    } catch (exception) {
+      dispatch(setNotification({ text: 'There was an error adding the comment. Try again later.', type:'error' }, 5))
+    }
+  }
+
   const listView = () => (
     <div>
       <div>
@@ -121,7 +131,7 @@ const App = () => {
           <UserList />
         </Route>
         <Route path='/blogs/:id'>
-          <Blog blog={linkBlog} editBlog={editBlog} removeBlog={removeBlog} user={user.username} />
+          <Blog blog={linkBlog ? linkBlog : { user: { name: null }, comments: [] }} editBlog={editBlog} removeBlog={removeBlog} createComment={createComment} user={user.username} />
         </Route>
         <Route path='/'>
           <div>
@@ -141,7 +151,7 @@ const App = () => {
   )
 
   const navbar = () => (
-    <Navbar collapseOnSelect expand="lg" bg="info" variant="">
+    <Navbar collapseOnSelect expand="lg" bg="info" variant="dark">
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="mr-auto">
@@ -153,7 +163,7 @@ const App = () => {
           </Nav.Link>
           <Nav.Link href="#" as="span">
             {user
-              ? <div><em>{user.name} logged in </em>
+              ? <div><em className='link'>{user.name} logged in </em>
                 <Button variant='primary' type="button" onClick={handleLogOut}>Logout</Button>
               </div>
               : ''
